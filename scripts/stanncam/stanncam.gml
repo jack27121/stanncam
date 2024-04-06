@@ -161,7 +161,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			__xTo = follow.x;
 			__yTo = follow.y;
 			
-
 			var _x_dist = __xTo - x;
 			var _y_dist = __yTo - y;
 			
@@ -171,17 +170,17 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			bounds_dist_w = round(bounds_dist_w * 100) / 100 //rounds to 2 decimal places
 			bounds_dist_h = round(bounds_dist_h * 100) / 100 //more decimal places makes the position flbbbbare up at certain points
 			
-			show_debug_message($"w: {bounds_dist_w} h: {bounds_dist_h}");
-			
 			//update camera position
 			if(abs(__xTo - x) > bounds_w){
-				var _spd = (bounds_dist_w / spd_threshold) * spd;
+				var _spd = (bounds_dist_w / spd_threshold) * spd;				
+				if(smooth_draw) _spd = round(_spd);
 				
 				x += _spd;
 			}
 			
 			if(abs(y - __yTo) > bounds_h){
 				var _spd = (bounds_dist_h / spd_threshold) * spd;
+				if(smooth_draw) _spd = round(_spd);
 				
 				y += _spd;
 			}				
