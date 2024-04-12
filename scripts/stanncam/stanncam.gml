@@ -167,14 +167,21 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			bounds_dist_w = (max(bounds_w, abs(_x_dist)) - bounds_w) * sign(_x_dist);
 			bounds_dist_h = (max(bounds_h, abs(_y_dist)) - bounds_h) * sign(_y_dist);
 			
+			bounds_dist_w = round(bounds_dist_w * 100) / 100 //rounds to 2 decimal places
+			bounds_dist_h = round(bounds_dist_h * 100) / 100 //more decimal places makes the position flbbbbare up at certain points
+			
 			//update camera position
 			if(abs(__xTo - x) > bounds_w){
 				var _spd = (bounds_dist_w / spd_threshold) * spd;
+				if(smooth_draw) _spd = round(_spd);
+				
 				x += _spd;
 			}
 			
 			if(abs(y - __yTo) > bounds_h){
 				var _spd = (bounds_dist_h / spd_threshold) * spd;
+				if(smooth_draw) _spd = round(_spd);
+				
 				y += _spd;
 			}
 		
@@ -256,8 +263,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 					
 					if(zoom_amount == __zoomTo) __zooming = false;
 				}
-				zoom_x = ((width * zoom_amount) - width) * 0.5;
-				zoom_y = ((height * zoom_amount) - height) * 0.5;
 			}
 		#endregion
 		
@@ -327,8 +332,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			width = _width;
 			height = _height;
-			zoom_x = ((width * zoom_amount) - width) * 0.5;
-			zoom_y = ((height * zoom_amount) - height) * 0.5;
 			__update_view_size();
 		} else {
 			__size_change = true;
@@ -373,9 +376,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static zoom = function(_zoom, _duration=0){
 		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			zoom_amount = _zoom;
-			zoom_x = ((width * zoom_amount) - width) * 0.5;
-			zoom_y = ((height * zoom_amount) - height) * 0.5;
-			if(!get_paused()) {
+			if(!get_paused()){
 				__update_view_size();
 			}
 		} else {
@@ -427,20 +428,20 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @function set_paused
 	/// @description sets camera paused state
 	/// @param {Bool} _paused
-	static set_paused = function(_paused) {
+	static set_paused = function(_paused){
 		paused = _paused;
 	}
 
 	/// @function get_paused
 	/// @description gets camera's paused state
 	/// @returns {Bool}
-	static get_paused = function() {
+	static get_paused = function(){
 		return paused;
 	}
 
 	/// @function toggle_paused
 	/// @description toggles the camera's paused state
-	static toggle_paused = function() {
+	static toggle_paused = function(){
 		set_paused(!get_paused());
 	}
 
@@ -618,22 +619,19 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @param {Bool} [_force=false]
 	/// @ignore
 	static __update_view_size = function(_force=false){
-		//if smooth_draw is off maintains pixel perfection even when zooming in and out
-		//if on it is handled by the draw events
-		if(smooth_draw){
-			var _ceiled_zoom = ceil(zoom_amount); //ensures the new surface size is a whole number
-			var _new_width = width * _ceiled_zoom;
-			var _new_height = height * _ceiled_zoom;
-		} else {
-			var _new_width  = floor(width * zoom_amount);
-			var _new_height = floor(height * zoom_amount);
-			
-			var _width_2px = _new_width mod 2;
-			var _height_2px = _new_height mod 2;
-			
-			_new_width  = _new_width - _width_2px;
-			_new_height = _new_height - _height_2px;
-		}
+		//ensures the new surface size is a whole number
+		var _new_width  = (width * zoom_amount);
+		var _new_height = (height * zoom_amount);
+		
+		var _width_2px = _new_width mod 2;
+		var _height_2px = _new_height mod 2;
+		
+		_new_width  = _new_width - _width_2px;
+		_new_height = _new_height - _height_2px;
+		
+		zoom_x = (_new_width  - width)  * 0.5;
+		zoom_y = (_new_height - height) * 0.5;
+		
 		//only runs if the size has changed (unless forced, used by __check_viewports to initialize)
 		if(_force || surface_get_width(surface) != _new_width || surface_get_height(surface) != _new_height){
 			__check_surface();
@@ -650,16 +648,11 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		var _new_x = x + offset_x - (width * 0.5) + __shake_x;
 		var _new_y = y + offset_y - (height * 0.5) + __shake_y;
 		
-		if(!smooth_draw){ // when smooth draw is off, the actual camera position gets rounded to whole numbers
-			_new_x = round(_new_x);
-			_new_y = round(_new_y);
-		}
-		
 		//apply zoom offset
 		_new_x -= zoom_x;
 		_new_y -= zoom_y;
 				
-		//zone constricting	
+		//zone constricting
 		if(__zone != noone){
 			var _zone_constrain_x = 0;
 			var _zone_constrain_y = 0;
@@ -682,7 +675,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			//horizontal check
 			if(__zone.sprite_width <= (width * zoom_amount) && __zone.left && __zone.right){
 				//if the zones width is smaller than the camera and both left and right are constraining the cam will be pushed to its middle
-				_zone_constrain_x = (__zone.x+__zone.sprite_width/2) - (_new_x+(width*zoom_amount)/2);
+				_zone_constrain_x = (__zone.x + __zone.sprite_width * 0.5) - (_new_x + (width * zoom_amount) * 0.5);
 			} else {
 				if(__zone.left)  _zone_constrain_x += _left;
 				if(__zone.right) _zone_constrain_x += _right;
@@ -690,7 +683,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			
 			//vertical check
 			if(__zone.sprite_height <= (height * zoom_amount) && __zone.top && __zone.bottom){
-				_zone_constrain_y = (__zone.y+__zone.sprite_height/2) - (_new_y+(height*zoom_amount)/2);
+				_zone_constrain_y = (__zone.y + __zone.sprite_height * 0.5) - (_new_y + (height * zoom_amount) * 0.5);
 			} else {
 				if(__zone.top)	_zone_constrain_y += _top;
 				if(__zone.bottom) _zone_constrain_y += _bottom;
@@ -724,9 +717,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			_new_x = floor(abs(_new_x)) * sign(_new_x);
 			_new_y = floor(abs(_new_y)) * sign(_new_y);
 			
-		} else {
-			_new_x = ceil(_new_x);
-			_new_y = ceil(_new_y);
 		}
 		
 		camera_set_view_pos(__camera, _new_x, _new_y);
@@ -888,18 +878,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		var _display_scale_x = __obj_stanncam_manager.__display_scale_x;
 		var _display_scale_y = __obj_stanncam_manager.__display_scale_y;
 		
-		if(smooth_draw){
-		//draws super smooth both when moving and zooming
-			_width *= zoom_amount;
-			_height *= zoom_amount;
-			_scale_x /= zoom_amount;
-			_scale_y /= zoom_amount;
-			
-			draw_surface_part_ext(_surface, x_frac + _left, y_frac + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
-		} else {
-			//maintains pixel perfection when moving and zooming, appears more stuttery
-			draw_surface_stretched(_surface, _x, _y, _width * _display_scale_x * _scale_x, _height * _display_scale_y * _scale_y);
-		}
+		draw_surface_stretched(_surface, _x, _y, _width * _display_scale_x * _scale_x, _height * _display_scale_y * _scale_y);
 		
 	}
 #endregion
@@ -908,7 +887,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	 * @function toString
 	 * @returns {String}
 	 */
-	static toString = function() {
+	static toString = function(){
 		return "<stanncam[" + string(cam_id) + "] (" + string(width) + ", " + string(height) + ")>";
 	}
 
