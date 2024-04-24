@@ -650,11 +650,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		var _new_x = x + offset_x - (width * 0.5) + __shake_x;
 		var _new_y = y + offset_y - (height * 0.5) + __shake_y;
 		
-		if(smooth_draw){ //smooth drawing requires one extra pixel on the camera surface to remove edge warping, this is to fix the offset that occurs with that
-			if(_new_x < 1) _new_x -= 1;	
-			if(_new_y < 1) _new_y -= 1;
-			
-		} else { // when smooth draw is off, the actual camera position gets rounded to whole numbers
+		if(!smooth_draw){// when smooth draw is off, the actual camera position gets rounded to whole numbers
 			_new_x = round(_new_x);
 			_new_y = round(_new_y);
 		}
@@ -662,6 +658,11 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		//apply zoom offset
 		_new_x -= zoom_x;
 		_new_y -= zoom_y;
+		
+		if(smooth_draw){ //smooth drawing requires one extra pixel on the camera surface to remove edge warping, this is to fix the offset that occurs with that
+			if(_new_x <= 0) _new_x -= 1;	
+			if(_new_y <= 0) _new_y -= 1;
+		}
 				
 		//zone constricting	
 		if(__zone != noone){
@@ -722,8 +723,10 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		
 		if(smooth_draw){
 			//seperates position into whole and fractional parts
+			//when position is negative, fraction is too, and so this is to compensate for that
+			
 			if(_new_x > 0) x_frac = frac(_new_x);
-			else x_frac = 1 + frac(_new_x); //when position is negative, fraction is too, and so this is to compensate for that
+			else x_frac = 1 + frac(_new_x); 
 					
 			if(_new_y > 0) y_frac = frac(_new_y);
 			else y_frac = 1 + frac(_new_y);
@@ -802,7 +805,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static draw = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
 		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height);
+		draw_surf(surface, _x, _y, _scale_x, _scale_y,0,0,width,height);
 	}
 	
 	/// @function draw_no_compensate
@@ -815,7 +818,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static draw_no_compensate = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
 		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height, false);
+		draw_surf(surface, _x, _y, _scale_x, _scale_y,0,0,width,height,false);
 	}
 	
 	/// @function draw_part
@@ -878,7 +881,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @param {Real} [_height=surface_get_height(_surface)]
 	/// @param {Bool} [_ratio_compensate=true]
 	/// @ignore
-	static draw_surf = function(_surface, _x, _y, _scale_x=1, _scale_y=1, _left=0, _top=0, _width=surface_get_width(_surface), _height=surface_get_height(_surface), _ratio_compensate=true){
+	static draw_surf = function(_surface, _x, _y, _scale_x=1, _scale_y=1, _left=0, _top=0, _width=width, _height=height, _ratio_compensate=true){
 		if(!surface_exists(_surface)){
 			return;
 		}
@@ -894,19 +897,30 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 
 		var _display_scale_x = __obj_stanncam_manager.__display_scale_x;
 		var _display_scale_y = __obj_stanncam_manager.__display_scale_y;
+
+		var _zoom_amount = zoom_amount;
+		var x_frac_ = x_frac;
+		var y_frac_ = y_frac;
 		
-		if(smooth_draw){
-		//draws super smooth both when moving and zooming
-			_width *= zoom_amount;
-			_height *= zoom_amount;
-			_scale_x /= zoom_amount;
-			_scale_y /= zoom_amount;
+		if(!smooth_draw){ //if smooth draw is off, the zoom amount becomes stepped to 0.02, and frac_x/y are 0
 			
-			draw_surface_part_ext(_surface, x_frac + _left, y_frac + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
-		} else {
-			//maintains pixel perfection when moving and zooming, appears more stuttery
-			draw_surface_stretched(_surface, _x, _y, _width * _display_scale_x * _scale_x, _height * _display_scale_y * _scale_y);
+			//var floored_zoom = floor(zoom_amount * 100);
+			//_zoom_amount = (floored_zoom - (floored_zoom mod 2)) / 100;
+			x_frac = 0;
+			y_frac = 0;
 		}
+			
+		_width   *= _zoom_amount;
+		_height  *= _zoom_amount;
+		_scale_x /= _zoom_amount;
+		_scale_y /= _zoom_amount;
+		
+		show_debug_message(_width)
+		show_debug_message(_height)
+		show_debug_message(_scale_x)
+		show_debug_message(_scale_y)
+		
+		draw_surface_part_ext(_surface, x_frac_ + _left, y_frac_ + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
 		
 	}
 #endregion
