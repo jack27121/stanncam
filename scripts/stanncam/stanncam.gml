@@ -373,8 +373,13 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static zoom = function(_zoom, _duration=0){
 		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			zoom_amount = _zoom;
+			
+			//gamemaker has some rounding issues, so here we round to nearest second decimal place, IE 0.19999999 becomes 0.02 yes this is neccesary 💀
+			zoom_amount = round(zoom_amount * 100) / 100;
+
 			zoom_x = ((width * zoom_amount) - width) * 0.5;
 			zoom_y = ((height * zoom_amount) - height) * 0.5;
+			
 			if(!get_paused()) {
 				__update_view_size();
 			}
@@ -898,30 +903,27 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		var _display_scale_x = __obj_stanncam_manager.__display_scale_x;
 		var _display_scale_y = __obj_stanncam_manager.__display_scale_y;
 
-		var _zoom_amount = zoom_amount;
-		var x_frac_ = x_frac;
-		var y_frac_ = y_frac;
-		
-		if(!smooth_draw){ //if smooth draw is off, the zoom amount becomes stepped to 0.02, and frac_x/y are 0
+		if(smooth_draw){ //if smooth draw is off, the zoom amount becomes stepped to 0.02, and frac_x/y are 0
 			
-			//var floored_zoom = floor(zoom_amount * 100);
-			//_zoom_amount = (floored_zoom - (floored_zoom mod 2)) / 100;
-			x_frac = 0;
-			y_frac = 0;
+			_width  *= zoom_amount;
+			_height *= zoom_amount;
+			_scale_x /= zoom_amount;
+			_scale_y /= zoom_amount;
+			
+			draw_surface_part_ext(_surface, x_frac + _left, y_frac + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
+			
+		} else {
+			var _width_stepped  = (_width  * zoom_amount);
+			var _height_stepped = (_height * zoom_amount);
+
+			_width_stepped  -= _width_stepped  mod 2;
+			_height_stepped -= _height_stepped mod 2;
+
+			_scale_x = _width  / _width_stepped;
+			_scale_y = _height / _height_stepped;
+
+			draw_surface_part_ext(_surface, _left, _top, _width_stepped, _height_stepped, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
 		}
-			
-		_width   *= _zoom_amount;
-		_height  *= _zoom_amount;
-		_scale_x /= _zoom_amount;
-		_scale_y /= _zoom_amount;
-		
-		show_debug_message(_width)
-		show_debug_message(_height)
-		show_debug_message(_scale_x)
-		show_debug_message(_scale_y)
-		
-		draw_surface_part_ext(_surface, x_frac_ + _left, y_frac_ + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
-		
 	}
 #endregion
 
