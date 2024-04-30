@@ -931,7 +931,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			_scale_y = _height / _height_stepped;
 
 			draw_surface_part_ext(_surface, _left, _top, _width_stepped, _height_stepped, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
-			//draw_surface_stretched(_surface, _x, _y, _width * _display_scale_x * _scale_x, _height * _display_scale_y * _scale_y);
 		}
 	}
 #endregion
