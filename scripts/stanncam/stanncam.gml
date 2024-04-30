@@ -167,14 +167,21 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			bounds_dist_w = (max(bounds_w, abs(_x_dist)) - bounds_w) * sign(_x_dist);
 			bounds_dist_h = (max(bounds_h, abs(_y_dist)) - bounds_h) * sign(_y_dist);
 			
+			bounds_dist_w = round(bounds_dist_w * 100) / 100 //rounds to 2 decimal places
+			bounds_dist_h = round(bounds_dist_h * 100) / 100 //more decimal places makes the position flbbbbare up at certain points
+			
 			//update camera position
 			if(abs(__xTo - x) > bounds_w){
 				var _spd = (bounds_dist_w / spd_threshold) * spd;
+				if(smooth_draw) _spd = round(_spd);
+				
 				x += _spd;
 			}
 			
 			if(abs(y - __yTo) > bounds_h){
 				var _spd = (bounds_dist_h / spd_threshold) * spd;
+				if(smooth_draw) _spd = round(_spd);
+				
 				y += _spd;
 			}
 		
@@ -256,8 +263,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 					
 					if(zoom_amount == __zoomTo) __zooming = false;
 				}
-				zoom_x = ((width * zoom_amount) - width) * 0.5;
-				zoom_y = ((height * zoom_amount) - height) * 0.5;
 			}
 		#endregion
 		
@@ -327,8 +332,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			width = _width;
 			height = _height;
-			zoom_x = ((width * zoom_amount) - width) * 0.5;
-			zoom_y = ((height * zoom_amount) - height) * 0.5;
 			__update_view_size();
 		} else {
 			__size_change = true;
@@ -374,7 +377,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			zoom_amount = _zoom;
 			
-			//gamemaker has some rounding issues, so here we round to nearest second decimal place, IE 0.19999999 becomes 0.02 yes this is neccesary 💀
+			//some rounding issues, so here we round to nearest second decimal place, IE 0.19999999 becomes 0.02, very edge case problem
 			zoom_amount = round(zoom_amount * 100) / 100;
 
 			zoom_x = ((width * zoom_amount) - width) * 0.5;
@@ -432,20 +435,20 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @function set_paused
 	/// @description sets camera paused state
 	/// @param {Bool} _paused
-	static set_paused = function(_paused) {
+	static set_paused = function(_paused){
 		paused = _paused;
 	}
 
 	/// @function get_paused
 	/// @description gets camera's paused state
 	/// @returns {Bool}
-	static get_paused = function() {
+	static get_paused = function(){
 		return paused;
 	}
 
 	/// @function toggle_paused
 	/// @description toggles the camera's paused state
-	static toggle_paused = function() {
+	static toggle_paused = function(){
 		set_paused(!get_paused());
 	}
 
@@ -747,9 +750,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			_new_x = floor(abs(_new_x)) * sign(_new_x);
 			_new_y = floor(abs(_new_y)) * sign(_new_y);
 			
-		} else {
-			_new_x = ceil(_new_x);
-			_new_y = ceil(_new_y);
 		}
 		
 		camera_set_view_pos(__camera, _new_x, _new_y);
@@ -939,7 +939,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	 * @function toString
 	 * @returns {String}
 	 */
-	static toString = function() {
+	static toString = function(){
 		return "<stanncam[" + string(cam_id) + "] (" + string(width) + ", " + string(height) + ")>";
 	}
 
