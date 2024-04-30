@@ -668,7 +668,15 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			if(_new_x <= 0) _new_x -= 1;	
 			if(_new_y <= 0) _new_y -= 1;
 		}
-				
+
+		//without smooth_draw zooming needs to be snapped a bit
+		var _width_stepped  = (width  * zoom_amount);
+		var _height_stepped = (height * zoom_amount);
+		if(!smooth_draw){
+			_width_stepped  -= _width_stepped  mod 2;
+			_height_stepped -= _height_stepped mod 2;
+		}		
+
 		//zone constricting	
 		if(__zone != noone){
 			var _zone_constrain_x = 0;
@@ -680,27 +688,27 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 				_left = max(0, __zone.bbox_left - _new_x);
 			}
 			if(__zone.right){
-				_right = -max(0, _new_x + (width * zoom_amount) - __zone.bbox_right);
+				_right = -max(0, _new_x + _width_stepped - __zone.bbox_right);
 			}
 			if(__zone.top){
 				_top = max(0, __zone.bbox_top - _new_y);
 			}
 			if(__zone.bottom){
-				_bottom = -max(0, _new_y + (height * zoom_amount) - __zone.bbox_bottom);
+				_bottom = -max(0, _new_y + _height_stepped - __zone.bbox_bottom);
 			}
 			
 			//horizontal check
-			if(__zone.sprite_width <= (width * zoom_amount) && __zone.left && __zone.right){
+			if(__zone.sprite_width <= (_width_stepped) && __zone.left && __zone.right){
 				//if the zones width is smaller than the camera and both left and right are constraining the cam will be pushed to its middle
-				_zone_constrain_x = (__zone.x+__zone.sprite_width/2) - (_new_x+(width*zoom_amount)/2);
+				_zone_constrain_x = (__zone.x+__zone.sprite_width/2) - (_new_x+_width_stepped/2);
 			} else {
 				if(__zone.left)  _zone_constrain_x += _left;
 				if(__zone.right) _zone_constrain_x += _right;
 			}
 			
 			//vertical check
-			if(__zone.sprite_height <= (height * zoom_amount) && __zone.top && __zone.bottom){
-				_zone_constrain_y = (__zone.y+__zone.sprite_height/2) - (_new_y+(height*zoom_amount)/2);
+			if(__zone.sprite_height <= (_height_stepped) && __zone.top && __zone.bottom){
+				_zone_constrain_y = (__zone.y+__zone.sprite_height/2) - (_new_y+_height_stepped/2);
 			} else {
 				if(__zone.top)	_zone_constrain_y += _top;
 				if(__zone.bottom) _zone_constrain_y += _bottom;
@@ -716,8 +724,8 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		
 		//Constrains camera to room
 		if(room_constrain){
-			__constrain_offset_x = (clamp(_new_x, 0, room_width - width * zoom_amount) - _new_x);
-			__constrain_offset_y = (clamp(_new_y, 0, room_height - height * zoom_amount) - _new_y);
+			__constrain_offset_x = (clamp(_new_x, 0, room_width - _width_stepped) - _new_x);
+			__constrain_offset_y = (clamp(_new_y, 0, room_height - _height_stepped) - _new_y);
 			
 			_new_x += __constrain_offset_x;
 			_new_y += __constrain_offset_y;
@@ -915,14 +923,15 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		} else {
 			var _width_stepped  = (_width  * zoom_amount);
 			var _height_stepped = (_height * zoom_amount);
-
+			
 			_width_stepped  -= _width_stepped  mod 2;
 			_height_stepped -= _height_stepped mod 2;
-
+			
 			_scale_x = _width  / _width_stepped;
 			_scale_y = _height / _height_stepped;
 
 			draw_surface_part_ext(_surface, _left, _top, _width_stepped, _height_stepped, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
+			//draw_surface_stretched(_surface, _x, _y, _width * _display_scale_x * _scale_x, _height * _display_scale_y * _scale_y);
 		}
 	}
 #endregion
