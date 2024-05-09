@@ -49,6 +49,11 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	spd = 10; //how fast the camera follows an instance
 	spd_threshold = 50; //the minimum distance the camera is away, for the speed to be in full effect
 	
+	// Cloaked Games: Minimum speed.
+	spd_min = 0; // The mimimum speed the camera will move when following an instance.
+	//This number should be the size of the smallest subpixel you are rendering, between 0 and 1.
+	//0 is the default behavior, smoother. 1 will eliminate subpixel jitter on approach, but stop more suddenly.
+	
 	room_constrain = false; //if camera should be constrained to the room size
 	
 	//the camera bounding box, for the followed instance to leave before the camera starts moving
@@ -156,10 +161,10 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 
 		#region moving
 		if(instance_exists(follow)){
-			
+	
 			//update destination
-			__xTo = follow.x;
-			__yTo = follow.y;
+			__xTo = follow.x + __offset_xTo;
+			__yTo = follow.y + __offset_yTo;
 			
 			var _x_dist = __xTo - x;
 			var _y_dist = __yTo - y;
@@ -170,24 +175,27 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			//update camera position
 			if(abs(__xTo - x) > bounds_w){
 				var _spd = (bounds_dist_w / spd_threshold) * spd;
+				_spd += spd_min * sign(_spd); //Cloaked Games: Added spd_min.
 				x += _spd;
 			}
 			
 			if(abs(y - __yTo) > bounds_h){
 				var _spd = (bounds_dist_h / spd_threshold) * spd;
+				_spd += spd_min * sign(_spd); //Cloaked Games: Added spd_min.
 				y += _spd;
 			}
 		
 		} else if(__moving){
+			//gradually moves camera into position based on duration
+			
+			//Cloaked Games: I added the offset to this movement step.
+			//Note, I did NOT add spd_min here, it doesn't work with animation curves.
+			x = stanncam_animcurve(__t, __xStart, __xTo + __offset_xTo, __duration, anim_curve);
+			y = stanncam_animcurve(__t, __yStart, __yTo + __offset_yTo, __duration, anim_curve);
+		
 			__t++;
 			
-			//gradually moves camera into position based on duration
-			x = stanncam_animcurve(__t, __xStart, __xTo, __duration, anim_curve);
-			y = stanncam_animcurve(__t, __yStart, __yTo, __duration, anim_curve);
-			
-			if(__t >= __duration){
-				__moving = false;
-			}
+			if(x == __xTo && y == __yTo) __moving = false;
 		}
 		#endregion
 		
@@ -219,14 +227,18 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		#endregion
 		
 		#region offset
-		if(__offset){
-			//gradually offsets camera based on duration
-			offset_x = stanncam_animcurve(__offset_t, __offset_xStart, __offset_xTo, __offset_duration, anim_curve_offset);
-			offset_y = stanncam_animcurve(__offset_t, __offset_yStart, __offset_yTo, __offset_duration, anim_curve_offset);
+		//Cloaked Games: I fully disabled this offset animatino, and instead combined it with the moving animation above.
+		//My smooth move solution doesn't easily work with these animation curves at all, because they are absolute positions.
+		//It should be possible if they returned velocity per frame instead of displacement.
 		
-			__offset_t++;
-			if(x == __offset_xTo && y == __offset_yTo) __offset = false;
-		}
+		//if(__offset){
+		//	//gradually offsets camera based on duration
+		//	offset_x = stanncam_animcurve(__offset_t, __offset_xStart, __offset_xTo, __offset_duration, anim_curve_offset);
+		//	offset_y = stanncam_animcurve(__offset_t, __offset_yStart, __offset_yTo, __offset_duration, anim_curve_offset);
+			
+		//	__offset_t++;
+		//	if(x == __offset_xTo && y == __offset_yTo) __offset = false;
+		//}
 		#endregion
 		
 		#region screen-shake
@@ -300,8 +312,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @param {Real} [_duration=0]
 	/// @ignore
 	static move = function(_x, _y, _duration=0){
-		if(_duration == 0 && !instance_exists(follow)){
-			//view position is updated immediately
+		if(_duration == 0){ //if duration is 0 the view is updated immediately
 			x = _x;
 			y = _y;
 			__update_view_pos();
