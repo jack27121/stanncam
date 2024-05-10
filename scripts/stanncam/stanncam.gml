@@ -167,18 +167,18 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			bounds_dist_w = (max(bounds_w, abs(_x_dist)) - bounds_w) * sign(_x_dist);
 			bounds_dist_h = (max(bounds_h, abs(_y_dist)) - bounds_h) * sign(_y_dist);
 			
-			bounds_dist_w = round(bounds_dist_w * 100) / 100 //rounds to 2 decimal places
-			bounds_dist_h = round(bounds_dist_h * 100) / 100 //more decimal places makes the position flbbbbare up at certain points
+			bounds_dist_w = round(bounds_dist_w * 100) / 100; //rounds to 2 decimal places
+			bounds_dist_h = round(bounds_dist_h * 100) / 100; //more decimal places may cause the position to fluctuate at certain points
 			
 			//update camera position
-			if(abs(__xTo - x) > bounds_w){
+			if(abs(_x_dist) > bounds_w){
 				var _spd = (bounds_dist_w / spd_threshold) * spd;
 				if(smooth_draw) _spd = round(_spd);
 				
 				x += _spd;
 			}
 			
-			if(abs(y - __yTo) > bounds_h){
+			if(abs(_y_dist) > bounds_h){
 				var _spd = (bounds_dist_h / spd_threshold) * spd;
 				if(smooth_draw) _spd = round(_spd);
 				
@@ -383,7 +383,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			zoom_x = ((width * zoom_amount) - width) * 0.5;
 			zoom_y = ((height * zoom_amount) - height) * 0.5;
 			
-			if(!get_paused()) {
+			if(!get_paused()){
 				__update_view_size();
 			}
 		} else {
@@ -630,16 +630,16 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		//if on it is handled by the draw events
 		if(smooth_draw){
 			var _ceiled_zoom = ceil(zoom_amount); //ensures the new surface size is a whole number
-			var _new_width = width * _ceiled_zoom   + 1; //smooth drawing needs the surface to be 1 pixel wider and taller to remove edge warping
+			var _new_width = width * _ceiled_zoom  + 1; //smooth drawing needs the surface to be 1 pixel wider and taller to remove edge warping
 			var _new_height = height * _ceiled_zoom + 1;
 		} else {
-			var _new_width  = floor(width * zoom_amount);
+			var _new_width = floor(width * zoom_amount);
 			var _new_height = floor(height * zoom_amount);
 			
 			var _width_2px = _new_width mod 2;
 			var _height_2px = _new_height mod 2;
 			
-			_new_width  = _new_width - _width_2px;
+			_new_width = _new_width - _width_2px;
 			_new_height = _new_height - _height_2px;
 		}
 		//only runs if the size has changed (unless forced, used by __check_viewports to initialize)
@@ -668,19 +668,19 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		_new_y -= zoom_y;
 		
 		if(smooth_draw){ //smooth drawing requires one extra pixel on the camera surface to remove edge warping, this is to fix the offset that occurs with that
-			if(_new_x <= 0) _new_x -= 1;	
+			if(_new_x <= 0) _new_x -= 1;
 			if(_new_y <= 0) _new_y -= 1;
 		}
 
 		//without smooth_draw zooming needs to be snapped a bit
-		var _width_stepped  = (width  * zoom_amount);
+		var _width_stepped = (width * zoom_amount);
 		var _height_stepped = (height * zoom_amount);
 		if(!smooth_draw){
-			_width_stepped  -= _width_stepped  mod 2;
+			_width_stepped -= _width_stepped mod 2;
 			_height_stepped -= _height_stepped mod 2;
-		}		
+		}
 
-		//zone constricting	
+		//zone constricting
 		if(__zone != noone){
 			var _zone_constrain_x = 0;
 			var _zone_constrain_y = 0;
@@ -705,7 +705,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 				//if the zones width is smaller than the camera and both left and right are constraining the cam will be pushed to its middle
 				_zone_constrain_x = (__zone.x+__zone.sprite_width/2) - (_new_x+_width_stepped/2);
 			} else {
-				if(__zone.left)  _zone_constrain_x += _left;
+				if(__zone.left) _zone_constrain_x += _left;
 				if(__zone.right) _zone_constrain_x += _right;
 			}
 			
@@ -742,7 +742,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			//when position is negative, fraction is too, and so this is to compensate for that
 			
 			if(_new_x > 0) x_frac = frac(_new_x);
-			else x_frac = 1 + frac(_new_x); 
+			else x_frac = 1 + frac(_new_x);
 					
 			if(_new_y > 0) y_frac = frac(_new_y);
 			else y_frac = 1 + frac(_new_y);
@@ -772,8 +772,8 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 				var x_offset = -offset_x - __constrain_offset_x - (__zone_constrain_x * __zone_constrain_amount) + zoom_x;
 				var y_offset = -offset_y - __constrain_offset_y - (__zone_constrain_y * __zone_constrain_amount) + zoom_y;
 				
-				var _x1 = (width * 0.5)  - bounds_w + x_offset;
-				var _x2 = (width * 0.5)  + bounds_w + x_offset;
+				var _x1 = (width * 0.5) - bounds_w + x_offset;
+				var _x2 = (width * 0.5) + bounds_w + x_offset;
 				var _y1 = (height * 0.5) - bounds_h + y_offset;
 				var _y2 = (height * 0.5) + bounds_h + y_offset;
 				draw_set_color(c_white);
@@ -818,7 +818,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static draw = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
 		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y,0,0,width,height);
+		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height);
 	}
 	
 	/// @function draw_no_compensate
@@ -831,7 +831,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	static draw_no_compensate = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
 		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y,0,0,width,height,false);
+		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height, false);
 	}
 	
 	/// @function draw_part
@@ -890,8 +890,8 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	/// @param {Real} [_scale_y=1]
 	/// @param {Real} [_left=0]
 	/// @param {Real} [_top=0]
-	/// @param {Real} [_width=surface_get_width(_surface)]
-	/// @param {Real} [_height=surface_get_height(_surface)]
+	/// @param {Real} [_width=width]
+	/// @param {Real} [_height=height]
 	/// @param {Bool} [_ratio_compensate=true]
 	/// @ignore
 	static draw_surf = function(_surface, _x, _y, _scale_x=1, _scale_y=1, _left=0, _top=0, _width=width, _height=height, _ratio_compensate=true){
@@ -912,22 +912,20 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		var _display_scale_y = __obj_stanncam_manager.__display_scale_y;
 
 		if(smooth_draw){ //if smooth draw is off, the zoom amount becomes stepped to 0.02, and frac_x/y are 0
-			
-			_width  *= zoom_amount;
+			_width *= zoom_amount;
 			_height *= zoom_amount;
 			_scale_x /= zoom_amount;
 			_scale_y /= zoom_amount;
 			
 			draw_surface_part_ext(_surface, x_frac + _left, y_frac + _top, _width, _height, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
-			
 		} else {
-			var _width_stepped  = (_width  * zoom_amount);
-			var _height_stepped = (_height * zoom_amount);
+			var _width_stepped = _width * zoom_amount;
+			var _height_stepped = _height * zoom_amount;
 			
-			_width_stepped  -= _width_stepped  mod 2;
+			_width_stepped -= _width_stepped mod 2;
 			_height_stepped -= _height_stepped mod 2;
 			
-			_scale_x = _width  / _width_stepped;
+			_scale_x = _width / _width_stepped;
 			_scale_y = _height / _height_stepped;
 
 			draw_surface_part_ext(_surface, _left, _top, _width_stepped, _height_stepped, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);

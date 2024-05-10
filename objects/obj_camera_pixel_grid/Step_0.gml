@@ -1,4 +1,3 @@
-
 //toggle zoom in
 if(mouse_check_button_pressed(mb_right)){
 	zoom_mode++;
@@ -71,14 +70,13 @@ if(_hinput != 0) hspd += _hinput*acceleration_spd;
 else hspd -= min(abs(hspd), deacceleration_spd) * sign(hspd);
 
 if(_vinput != 0) vspd += _vinput*acceleration_spd;
-else vspd -= min(abs(vspd), deacceleration_spd) * sign(vspd);	
+else vspd -= min(abs(vspd), deacceleration_spd) * sign(vspd);
 
-hspd = clamp(hspd,-max_spd,max_spd);
-vspd = clamp(vspd,-max_spd,max_spd);
+hspd = clamp(hspd, -max_spd, max_spd);
+vspd = clamp(vspd, -max_spd, max_spd);
 	
 if(hspd != 0 || vspd != 0){
 	var _x = cam1.x + hspd;
 	var _y = cam1.y + vspd;
 	cam1.move(_x, _y, 0);
 }
-
