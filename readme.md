@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center" font-size=100em>
-STANNcam 2.3.0 🎥
+STANNcam 2.3.1 🎥
 </h1>
 
 STANNcam is a pixel-perfect camera and resolution manager system for GameMaker (and onwards)  
