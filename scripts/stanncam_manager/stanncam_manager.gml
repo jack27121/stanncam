@@ -63,12 +63,12 @@ function stanncam_init(_game_w, _game_h, _resolution_w=_game_w, _resolution_h=_g
 /// @function stanncam_destroy
 /// @description removes all stanncam references from the game, the opposite of stanncam_init
 /// @param {Bool} [_application_surface_draw_enable=true]
-function stanncam_destroy(_application_surface_draw_enable = true){
+function stanncam_destroy(_application_surface_draw_enable=true){
 	application_surface_draw_enable(_application_surface_draw_enable);
 	
-	time_source_destroy(global.stanncam_time_source,true);	
-	for (var i = 0; i < array_length(global.stanncams); ++i) {
-		if(global.stanncams[i] != -1) {
+	time_source_destroy(global.stanncam_time_source, true);
+	for (var i = 0; i < array_length(global.stanncams); ++i){
+		if(global.stanncams[i] != -1){
 			global.stanncams[i].destroy();
 		}
 	}
@@ -353,7 +353,7 @@ function stanncam_debug_set_draw_zones(_should_draw){
 
 /// @function stanncam_toggle_cameras_paused
 /// @description toggles camera's paused state
-function stanncam_toggle_cameras_paused() {
+function stanncam_toggle_cameras_paused(){
 	var _len = array_length(global.stanncams);
 	for (var i = 0; i < _len; ++i){
 		var _camera = global.stanncams[i];
@@ -366,7 +366,7 @@ function stanncam_toggle_cameras_paused() {
 /// @function stanncam_set_cameras_paused
 /// @description sets all cameras to paused state
 /// @param {Bool} _paused
-function stanncam_set_cameras_paused(_paused) {
+function stanncam_set_cameras_paused(_paused){
 	var _len = array_length(global.stanncams);
 	for (var i = 0; i < _len; ++i){
 		var _camera = global.stanncams[i];
@@ -378,12 +378,12 @@ function stanncam_set_cameras_paused(_paused) {
 
 /// @function stanncam_cameras_pause
 /// @description sets all cameras to paused state
-function stanncam_cameras_pause() {
+function stanncam_cameras_pause(){
 	return stanncam_set_cameras_paused(true);
 }
 
 /// @function stanncam_cameras_unpause
 /// @description sets all cameras to an unpaused state
-function stanncam_cameras_unpause() {
+function stanncam_cameras_unpause(){
 	return stanncam_set_cameras_paused(false);
 }

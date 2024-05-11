@@ -8,8 +8,14 @@ draw_set_valign(fa_top);
 draw_text_outline(1, 0, "[RMB] Zoom amount: " + string(zoom_text), _outline_width, _precision);
 draw_text_outline(1, _offset * 1, "[F] camera shake", _outline_width, _precision);
 draw_text_outline(1, _offset * 2, "[P] camera paused: " + (cam1.get_paused() ? "ON" : "OFF"), _outline_width, _precision);
-draw_text_outline(1, _offset * 3, "[1 & 2 & 3] to switch", _outline_width, _precision);
-draw_text_outline(1, _offset * 4, "between example rooms", _outline_width, _precision);
+draw_text_outline(1, _offset * 3, "[B] smooth camera: " + (cam1.smooth_draw ? "ON" : "OFF"), _outline_width, _precision);
+draw_text_outline(1, _offset * 4, "[1 & 2 & 3] to switch", _outline_width, _precision);
+draw_text_outline(1, _offset * 5, "between example rooms", _outline_width, _precision);
+
+//draw current camera position
+draw_set_halign(fa_right);
+draw_text_outline(-1, 0, $"x:{cam1.get_x()} y:{cam1.get_y()} ", _outline_width, _precision);
+draw_text_outline(-1, _offset * 1, $"x_frac:{cam1.x_frac} y_frac:{cam1.y_frac} ", _outline_width, _precision);
 
 //draw current resolution text
 draw_set_halign(fa_right);
@@ -34,6 +40,6 @@ draw_text_outline(global.gui_w - 1, _offset * 3, "window mode: " + _window_mode_
 var mx = cam1.room_to_gui_x(cam1.get_mouse_x());
 var my = cam1.room_to_gui_y(cam1.get_mouse_y());
 draw_set_halign(fa_left);
-draw_text(mx,my,$"{mx} {my}");
+draw_text(mx, my, $"{mx} {my}");
 
 

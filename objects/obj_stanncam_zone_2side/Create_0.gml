@@ -1,26 +1,25 @@
-/// @description
 event_inherited();
 
-left	= false;
-top		= false;
-right	= false;
-bottom	= false;
+left = false;
+top = false;
+right = false;
+bottom = false;
 
 switch (image_angle) {
-    case 0:
-        right = true;
+	case 0:
+		right = true;
 		left = true;
-        break;
-    case 90:
-        top = true;
+		break;
+	case 90:
+		top = true;
 		bottom = true;
-        break;
+		break;
 	case 180:
-        right = true;
+		right = true;
 		left = true;
-        break;
+		break;
 	case 270:
-        top = true;
+		top = true;
 		bottom = true;
-        break;
+		break;
 }

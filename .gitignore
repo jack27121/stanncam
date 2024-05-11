@@ -4,3 +4,4 @@
 # Stitch files
 stitch.config.json
 tmp/
+/options
