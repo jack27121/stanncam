@@ -41,8 +41,8 @@ draw_zones = false;
 surface = -1;
 
 
-parralax_bg = function(_cam){
-	//the background is scaled up so it appears smooth when being parralaxed
+parallax_bg = function(_cam){
+	//the background is scaled up so it appears smooth when being parallaxed
 	var _scalex = stanncam_get_res_scale_x();
 	var _scaley = stanncam_get_res_scale_y();
 	
@@ -59,10 +59,10 @@ parralax_bg = function(_cam){
 	draw_sprite_ext_tiled(spr_underwater_layer05, 0, _pos_x + (_offset_x * 1.0), _pos_y, 2, 1, _scalex, _scaley);
 }
 
-parralax_bg1 = function(){
-	parralax_bg(cam1);
+parallax_bg1 = function(){
+	parallax_bg(cam1);
 }
 
-parralax_bg2 = function(){
-	parralax_bg(cam2);
+parallax_bg2 = function(){
+	parallax_bg(cam2);
 }
