@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"stanncam",
+  "%Name":"stanncam_3d",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"stanncam",
+  "name":"stanncam_3d",
   "parent":{
     "name":"STANNcam",
     "path":"folders/STANNcam.yy",

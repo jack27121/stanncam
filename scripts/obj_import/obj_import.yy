@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"stanncam",
+  "%Name":"obj_import",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"stanncam",
+  "name":"obj_import",
   "parent":{
-    "name":"STANNcam",
-    "path":"folders/STANNcam.yy",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

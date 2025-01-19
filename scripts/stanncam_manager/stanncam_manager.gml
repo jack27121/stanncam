@@ -18,6 +18,9 @@ enum STANNCAM_WINDOW_MODE {
 /// @param {Real} [_window_mode=STANNCAM_WINDOW_MODE.WINDOWED]
 function stanncam_init(_game_w, _game_h, _resolution_w=_game_w, _resolution_h=_game_h, _gui_w=_game_w, _gui_h=_game_h, _window_mode=STANNCAM_WINDOW_MODE.WINDOWED){
 	
+	gpu_set_ztestenable(true);
+	gpu_set_zwriteenable(true);
+	
 	//if one already exists it is destroyed
 	if(instance_exists(__obj_stanncam_manager)){
 		instance_destroy(__obj_stanncam_manager);

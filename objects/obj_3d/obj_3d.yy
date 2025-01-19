@@ -1,20 +1,20 @@
 {
   "$GMObject":"",
-  "%Name":"obj_stanncam_zone_u",
+  "%Name":"obj_3d",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":77,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_stanncam_zone_u",
+  "name":"obj_3d",
   "overriddenProperties":[],
   "parent":{
-    "name":"Zones",
-    "path":"folders/STANNcam/Zones.yy",
+    "name":"Objects",
+    "path":"folders/Objects.yy",
   },
-  "parentObjectId":{
-    "name":"obj_stanncam_zone",
-    "path":"objects/obj_stanncam_zone/obj_stanncam_zone.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -32,10 +32,7 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"spr_stanncam_zone_u",
-    "path":"sprites/spr_stanncam_zone_u/spr_stanncam_zone_u.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }

@@ -8,43 +8,17 @@
 /// @param {Real} [_height=global.game_h]
 /// @param {Bool} [_surface_extra_on=false] - use surface_extra in regular draw events
 /// @param {Bool} [_smooth_draw=true] - use fractional camera position when drawing
-function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surface_extra_on=false, _smooth_draw=true) constructor{
-#region init
-	//whenever a new cam is created number_of_cams gets incremented
-	cam_id = __obj_stanncam_manager.number_of_cams;
-	
-	//checks if there's already 8 cameras
-	if(cam_id == 8){
-		show_error("There can only be a maximum of 8 cameras.", true);
-	}
-
-	__camera = camera_create();
-	view_camera[cam_id] = __camera;
-	
-	++__obj_stanncam_manager.number_of_cams;
-	
-	global.stanncams[cam_id] = self;
-#endregion
+function stanncam(_x=0, _y=0, _width, _height, _surface_extra_on, _smooth_draw=true) : __stanncam_base(_width, _height, _surface_extra_on) constructor{
 
 #region variables
 	x = _x;
 	y = _y;
-	
-	width = _width;
-	height = _height;
 	
 	//offset the camera from whatever it's looking at
 	offset_x = 0;
 	offset_y = 0;
 	
 	follow = noone;
-	
-	//The extra surface is only neccesary if you are drawing the camera recursively in the room
-	//Like a tv screen, where it can capture itself
-	surface_extra_on = _surface_extra_on;
-	
-	//the first camera uses the application surface
-	use_app_surface = cam_id == 0;
 	
 	spd = 10; //how fast the camera follows an instance
 	spd_threshold = 50; //the minimum distance the camera is away, for the speed to be in full effect
@@ -68,8 +42,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	anim_curve_size = stanncam_ac_ease;
 	anim_curve_offset = stanncam_ac_ease;
 	
-	surface = -1;
-	surface_extra = -1;
 	__surface_special = -1;
 	
 	debug_draw = false;
@@ -133,10 +105,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	__shake_time = 0;
 	__shake_x = 0;
 	__shake_y = 0;
-	
-	__check_surface();
-	__check_viewports();
-	set_size(width, height);
 	
 	#endregion
 	
@@ -579,48 +547,6 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 	
 #region Internal functions
 	
-	/// @function __check_viewports
-	/// @description enables viewports and sets viewports size
-	/// @ignore
-	static __check_viewports = function(){
-		view_visible[cam_id] = true;
-		view_camera[cam_id] = __camera;
-		__check_surface();
-		__update_view_size(true);
-	}
-	
-	/// @function __check_surface
-	/// @description checks if surface & surface_extra exists and else creates it
-	/// @ignore
-	static __check_surface = function(){
-		if(use_app_surface){
-			surface = application_surface;
-		} else {
-			if (!surface_exists(surface)){
-				surface = surface_create(width, height);
-			}
-		}
-		
-		if(surface_extra_on && !surface_exists(surface_extra)){
-			surface_extra = surface_create(width, height);
-		}
-	}
-	
-	/// @function __predraw
-	/// @description clears the surface
-	/// @ignore
-	static __predraw = function(){
-		__check_surface();
-		if(surface_extra_on){
-			surface_copy(surface_extra, 0, 0, surface);
-		}
-
-		surface_set_target(surface);
-		draw_clear_alpha(c_black, 0);
-		surface_reset_target()
-		view_set_surface_id(cam_id, surface);
-	}
-	
 	/// @function __update_view_size
 	/// @description updates the view size
 	/// @param {Bool} [_force=false]
@@ -808,48 +734,7 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 		}
 	}
 	
-	/// @function draw
-	/// @description draws stanncam
-	/// @param {Real} _x
-	/// @param {Real} _y
-	/// @param {Real} [_scale_x=1]
-	/// @param {Real} [_scale_y=1]
-	/// @ignore
-	static draw = function(_x, _y, _scale_x=1, _scale_y=1){
-		__check_surface();
-		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height);
-	}
-	
-	/// @function draw_no_compensate
-	/// @description draws stanncam but without being offset by stanncam_ratio_compensate
-	/// @param {Real} _x
-	/// @param {Real} _y
-	/// @param {Real} [_scale_x=1]
-	/// @param {Real} [_scale_y=1]
-	/// @ignore
-	static draw_no_compensate = function(_x, _y, _scale_x=1, _scale_y=1){
-		__check_surface();
-		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height, false);
-	}
-	
-	/// @function draw_part
-	/// @description draws part of stanncam camera view
-	/// @param {Real} _x
-	/// @param {Real} _y
-	/// @param {Real} _left
-	/// @param {Real} _top
-	/// @param {Real} _width
-	/// @param {Real} _height
-	/// @param {Real} [_scale_x=1]
-	/// @param {Real} [_scale_y=1]
-	/// @ignore
-	static draw_part = function(_x, _y, _left, _top, _width, _height, _scale_x=1, _scale_y=1){
-		__check_surface();
-		__debug_draw();
-		draw_surf(surface, _x, _y, _scale_x, _scale_y, _left, _top, _width, _height);
-	}
+
 	
 	/// @function draw_special
 	/// @description pass in draw commands, and have them be scaled to match the stanncam
@@ -925,20 +810,14 @@ function stanncam(_x=0, _y=0, _width=global.game_w, _height=global.game_h, _surf
 			_width_stepped -= _width_stepped mod 2;
 			_height_stepped -= _height_stepped mod 2;
 			
-			_scale_x = _width / _width_stepped;
-			_scale_y = _height / _height_stepped;
+			_scale_x /= _width / _width_stepped;
+			_scale_y /= _height / _height_stepped;
 
 			draw_surface_part_ext(_surface, _left, _top, _width_stepped, _height_stepped, _x, _y, _display_scale_x * _scale_x, _display_scale_y * _scale_y, -1, 1);
 		}
 	}
 #endregion
 
-	/**
-	 * @function toString
-	 * @returns {String}
-	 */
-	static toString = function(){
-		return "<stanncam[" + string(cam_id) + "] (" + string(width) + ", " + string(height) + ")>";
-	}
+	toString()
 
 }
