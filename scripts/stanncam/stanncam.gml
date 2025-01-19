@@ -44,8 +44,6 @@ function stanncam(_x=0, _y=0, _width, _height, _surface_extra_on, _smooth_draw=t
 	
 	__surface_special = -1;
 	
-	debug_draw = false;
-	
 	__destroyed = false;
 	
 	//zone constrain
@@ -687,7 +685,7 @@ function stanncam(_x=0, _y=0, _width, _height, _surface_extra_on, _smooth_draw=t
 	/// @function __debug_draw
 	/// @description draws debug information
 	/// @ignore
-	static __debug_draw = function(){
+	static __debug_draw = function(_x = 0, _y = 0, _scale_x = 1, _scale_y = 1){
 		if(debug_draw){
 			//draws camera bounding box
 			if(instance_exists(follow)){

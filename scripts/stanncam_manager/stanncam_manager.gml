@@ -17,7 +17,6 @@ enum STANNCAM_WINDOW_MODE {
 /// @param {Real} [_gui_h=_game_h]
 /// @param {Real} [_window_mode=STANNCAM_WINDOW_MODE.WINDOWED]
 function stanncam_init(_game_w, _game_h, _resolution_w=_game_w, _resolution_h=_game_h, _gui_w=_game_w, _gui_h=_game_h, _window_mode=STANNCAM_WINDOW_MODE.WINDOWED){
-	
 	gpu_set_ztestenable(true);
 	gpu_set_zwriteenable(true);
 	

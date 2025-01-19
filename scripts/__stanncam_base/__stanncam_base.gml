@@ -31,6 +31,8 @@ function __stanncam_base(_width=global.game_w,_height=global.game_h, _surface_ex
 	surface_extra = -1;
 	__zone = noone;
 	
+	debug_draw = false;
+	
 	//The extra surface is only neccesary if you are drawing the camera recursively in the room
 	//Like a tv screen, where it can capture itself
 	surface_extra_on = _surface_extra_on;
@@ -117,7 +119,7 @@ function __stanncam_base(_width=global.game_w,_height=global.game_h, _surface_ex
 	/// @function __debug_draw
 	/// @description draws debug information
 	/// @ignore
-	static __debug_draw = function(){
+	static __debug_draw = function(_x, _y, _scale_x, _scale_y){
 		//empty in base
 	}
 
@@ -130,8 +132,8 @@ function __stanncam_base(_width=global.game_w,_height=global.game_h, _surface_ex
 	/// @ignore
 	static draw = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
-		__debug_draw();
 		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height);
+		__debug_draw(_x, _y, _scale_x, _scale_y);
 	}
 	
 	/// @function draw_no_compensate
@@ -143,8 +145,8 @@ function __stanncam_base(_width=global.game_w,_height=global.game_h, _surface_ex
 	/// @ignore
 	static draw_no_compensate = function(_x, _y, _scale_x=1, _scale_y=1){
 		__check_surface();
-		__debug_draw();
 		draw_surf(surface, _x, _y, _scale_x, _scale_y, 0, 0, width, height, false);
+		__debug_draw(_x, _y, _scale_x, _scale_y);
 	}
 	
 	/// @function draw_part
@@ -160,8 +162,8 @@ function __stanncam_base(_width=global.game_w,_height=global.game_h, _surface_ex
 	/// @ignore
 	static draw_part = function(_x, _y, _left, _top, _width, _height, _scale_x=1, _scale_y=1){
 		__check_surface();
-		__debug_draw();
 		draw_surf(surface, _x, _y, _scale_x, _scale_y, _left, _top, _width, _height);
+		__debug_draw(_x, _y, _scale_x, _scale_y);
 	}
 	
 		/// @function draw_surf

@@ -7,11 +7,9 @@ var cam = global.stanncams[0].cam_id;
 //camera_set_view_mat(cam, viewmat);
 //camera_apply(cam)
 
-matrix_set(matrix_world,matrix_build(0,0,100,0,0,0,100,100,100));
+matrix_set(matrix_world,matrix_build(0,0,50,0,0,0,100,100,100));
 shader_set(sh_3d)
 vertex_submit(mesh,pr_trianglelist,-1);
 shader_reset()
 
 matrix_set(matrix_world,matrix_build_identity());
-
-draw_sprite(spr_ball,0,0,0);
