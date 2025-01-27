@@ -21,6 +21,7 @@
     {"name":"rm_3d","order":1,"path":"rooms/rm_3d/rm_3d.yy",},
     {"name":"__stanncam_base","order":7,"path":"scripts/__stanncam_base/__stanncam_base.yy",},
     {"name":"obj_import","order":1,"path":"scripts/obj_import/obj_import.yy",},
+    {"name":"stanncam_3d_functions","order":8,"path":"scripts/stanncam_3d_functions/stanncam_3d_functions.yy",},
     {"name":"stanncam_3d","order":6,"path":"scripts/stanncam_3d/stanncam_3d.yy",},
     {"name":"spr_stanncam_zone_1side","order":1,"path":"sprites/spr_stanncam_zone_1side/spr_stanncam_zone_1side.yy",},
     {"name":"spr_stanncam_zone_2side","order":2,"path":"sprites/spr_stanncam_zone_2side/spr_stanncam_zone_2side.yy",},

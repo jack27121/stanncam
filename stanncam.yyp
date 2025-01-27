@@ -76,6 +76,7 @@
     {"id":{"name":"draw_text_outline","path":"scripts/draw_text_outline/draw_text_outline.yy",},},
     {"id":{"name":"macros","path":"scripts/macros/macros.yy",},},
     {"id":{"name":"obj_import","path":"scripts/obj_import/obj_import.yy",},},
+    {"id":{"name":"stanncam_3d_functions","path":"scripts/stanncam_3d_functions/stanncam_3d_functions.yy",},},
     {"id":{"name":"stanncam_3d","path":"scripts/stanncam_3d/stanncam_3d.yy",},},
     {"id":{"name":"stanncam_animcurve","path":"scripts/stanncam_animcurve/stanncam_animcurve.yy",},},
     {"id":{"name":"stanncam_macros","path":"scripts/stanncam_macros/stanncam_macros.yy",},},

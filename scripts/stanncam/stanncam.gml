@@ -11,6 +11,11 @@
 function stanncam(_x=0, _y=0, _width, _height, _surface_extra_on, _smooth_draw=true) : __stanncam_base(_width, _height, _surface_extra_on) constructor{
 
 #region variables
+
+	camera_set_begin_script(view_camera[cam_id],function(){
+		stanncam_3d_draw(false);
+	});
+
 	x = _x;
 	y = _y;
 	
